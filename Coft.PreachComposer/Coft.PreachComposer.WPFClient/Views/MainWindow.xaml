@@ -8,7 +8,7 @@
         DataContext="{Binding Main, Source={StaticResource ViewModelLocator}}"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <Button Command="{Binding ProceedCommand}">
+        <Button Command="{Binding ProcessCommand}">
             <TextBox>Start</TextBox>
         </Button>
     </Grid>
