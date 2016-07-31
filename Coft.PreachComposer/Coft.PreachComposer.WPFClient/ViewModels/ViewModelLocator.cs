@@ -26,7 +26,7 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
 
             ServiceLocator.Current.GetInstance<MainViewModel>().AudioPath = "samples/sample1.mp3";
             ServiceLocator.Current.GetInstance<MainViewModel>().ImagePath = "samples/sample1.png";
-            ServiceLocator.Current.GetInstance<MainViewModel>().VideoPath = "samples/video1.mp4";
+            ServiceLocator.Current.GetInstance<MainViewModel>().VideoPath = "samples/video2.mp4";
         }
 
         public MainViewModel Main
