@@ -21,6 +21,7 @@ namespace Coft.PreachComposer.WPFClient
         {
             AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            GalaSoft.MvvmLight.Threading.DispatcherHelper.Initialize();
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

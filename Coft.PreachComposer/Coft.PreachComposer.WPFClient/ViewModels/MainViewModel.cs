@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows;
 using Coft.PreachComposer.Models.Services;
+using GalaSoft.MvvmLight.Threading;
 
 namespace Coft.PreachComposer.WPFClient.ViewModels
 {
@@ -85,7 +86,14 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
         {
             this.videoService = videoService;
 
-            videoService.AttachProgressAction((currentProgress) => { Progress = currentProgress; });
+            videoService.AttachProgressAction((currentProgress) => {
+                DispatcherHelper.CheckBeginInvokeOnUI(
+                    () =>
+                    {
+                        Progress = currentProgress;
+                    }
+                );
+            });
         }
 
         public void ExecutedProcessCommand()
