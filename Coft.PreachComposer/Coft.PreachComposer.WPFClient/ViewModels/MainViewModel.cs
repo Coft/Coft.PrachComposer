@@ -68,7 +68,10 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
                 {
                     processCommand = new RelayCommand(
                         ExecutedProcessCommand, 
-                        () => !IsProcessing && !string.IsNullOrEmpty(ImagePath) && !string.IsNullOrEmpty(AudioPath) && !string.IsNullOrEmpty(VideoPath));
+                        () => !IsProcessing 
+                            && !string.IsNullOrEmpty(ImagePath) && File.Exists(ImagePath) 
+                            && !string.IsNullOrEmpty(AudioPath) && File.Exists(AudioPath)
+                            && !string.IsNullOrEmpty(VideoPath) && !File.Exists(VideoPath));
                 }
 
                 return processCommand;

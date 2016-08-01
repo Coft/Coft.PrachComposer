@@ -6,10 +6,74 @@
         xmlns:local="clr-namespace:Coft.PreachComposer.WPFClient"
         mc:Ignorable="d"
         DataContext="{Binding Main, Source={StaticResource ViewModelLocator}}"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Preach Composer" Height="355" Width="525">
     <Grid>
-        <Button Command="{Binding ProcessCommand}">
-            <TextBox>Start</TextBox>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+
+        <Button Grid.Row="0" Command="{Binding ChoseImageCommand}">
+            Wybierz obrazek
+        </Button>
+
+        <TextBlock Grid.Row="0"
+                   Grid.Column="1"
+                   VerticalAlignment="Center"
+                   Text="{Binding ImagePath}"/>
+
+        <Button Grid.Row="1" Command="{Binding ChoseAudioCommand}">
+            Wybierz audio
+        </Button>
+
+        <TextBlock Grid.Row="1"
+                   Grid.Column="1"
+                   VerticalAlignment="Center"
+                   Text="{Binding AudioPath}"/>
+        
+        <Button Grid.Row="2" Command="{Binding ChoseVideoDirectoryCommand}">
+            Wybierz folder zapisu video
+        </Button>
+
+        <TextBlock Grid.Row="2"
+                   Grid.Column="1"
+                   VerticalAlignment="Center"
+                   Text="{Binding VideoDirectoryPath}"/>
+        
+        <TextBlock Grid.Row="3"
+                   Text="Podaj tytuł pliku video"
+                   VerticalAlignment="Center"/>
+
+        <TextBox Grid.Row="3"
+                 Grid.Column="1"
+                 VerticalAlignment="Center"
+                 Text="{Binding VideoFilename}"/>
+        
+        <ProgressBar Grid.Row="4" 
+                     Grid.ColumnSpan="2"
+                     Minimum="0"
+                     Maximum="100"
+                     Value="{Binding Progress}"
+                     Margin="5"
+                     />
+        
+        <TextBlock Grid.Row="5"
+                   Grid.ColumnSpan="2"
+                   Text="{Binding Message}"
+                   Margin="0"
+                   VerticalAlignment="Center"/>
+        
+        <Button Grid.Row="6" Grid.ColumnSpan="2" Command="{Binding ProcessCommand}">
+            Rozpocznij przetwarzanie
         </Button>
     </Grid>
 </Window>
