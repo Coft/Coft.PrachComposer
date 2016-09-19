@@ -29,7 +29,7 @@
         <TextBlock Grid.Row="0"
                    Grid.Column="1"
                    VerticalAlignment="Center"
-                   Text="{Binding ImagePath}"/>
+                   Text="{Binding ImageFilename}"/>
 
         <Button Grid.Row="1" Command="{Binding ChoseAudioCommand}">
             Wybierz audio
@@ -38,7 +38,7 @@
         <TextBlock Grid.Row="1"
                    Grid.Column="1"
                    VerticalAlignment="Center"
-                   Text="{Binding AudioPath}"/>
+                   Text="{Binding AudioFilename}"/>
         
         <Button Grid.Row="2" Command="{Binding ChoseVideoDirectoryCommand}">
             Wybierz folder zapisu video
@@ -57,7 +57,7 @@
                  Grid.Column="1"
                  VerticalAlignment="Center"
                  Margin="5"
-                 Text="{Binding VideoFilename}"/>
+                 Text="{Binding VideoFilename, UpdateSourceTrigger=PropertyChanged}"/>
         
         <ProgressBar Grid.Row="4" 
                      Grid.ColumnSpan="2"

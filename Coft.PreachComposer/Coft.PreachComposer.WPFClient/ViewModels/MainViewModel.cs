@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using Coft.PreachComposer.Models.Services;
 using GalaSoft.MvvmLight.Threading;
+using Coft.PreachComposer.Models.Messages;
 
 namespace Coft.PreachComposer.WPFClient.ViewModels
 {
@@ -34,6 +35,22 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
             set { Set(ref imagePath, value); }
         }
 
+        private string imageFilename;
+
+        public string ImageFilename
+        {
+            get { return imageFilename; }
+            set { Set(ref imageFilename, value); }
+        }
+
+        private string audioFilename;
+
+        public string AudioFilename
+        {
+            get { return audioFilename; }
+            set { Set(ref audioFilename, value); }
+        }
+
         private string audioPath;
 
         public string AudioPath
@@ -42,12 +59,25 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
             set { Set(ref audioPath, value); }
         }
 
-        private string videoPath;
-
         public string VideoPath
         {
-            get { return videoPath; }
-            set { Set(ref videoPath, value); }
+            get { return Path.Combine(VideoDirectoryPath, $"{VideoFilename}.mp4"); }
+        }
+
+        private string videoFilename;
+
+        public string VideoFilename
+        {
+            get { return videoFilename; }
+            set { Set(ref videoFilename, value); }
+        }
+
+        private string videoDirectoryPath;
+
+        public string VideoDirectoryPath
+        {
+            get { return videoDirectoryPath; }
+            set { Set(ref videoDirectoryPath, value); }
         }
 
         private int progress;
@@ -58,6 +88,47 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
             set { Set(ref progress, value); }
         }
 
+        private RelayCommand choseImageCommand;
+
+        public RelayCommand ChoseImageCommand
+        {
+            get { return choseImageCommand??
+                    (choseImageCommand = new RelayCommand(
+                        () => {
+                            Messenger.Default.Send<ShowFileDialogProceed>(new ShowFileDialogProceed() { IsFolder = false, FileType = Models.Helpers.Enums.FileType.Image });
+                        }, 
+                        () => true)); }
+        }
+
+        private RelayCommand choseAudioCommand;
+
+        public RelayCommand ChoseAudioCommand
+        {
+            get
+            {
+                return choseAudioCommand ??
+                  (choseAudioCommand = new RelayCommand(
+                      () => {
+                          Messenger.Default.Send<ShowFileDialogProceed>(new ShowFileDialogProceed() { IsFolder = false, FileType = Models.Helpers.Enums.FileType.Audio });
+                      },
+                      () => true));
+            }
+        }
+
+        private RelayCommand choseVideoDirectoryCommand;
+
+        public RelayCommand ChoseVideoDirectoryCommand
+        {
+            get
+            {
+                return choseVideoDirectoryCommand ??
+                  (choseVideoDirectoryCommand = new RelayCommand(
+                      () => {
+                          Messenger.Default.Send<ShowFileDialogProceed>(new ShowFileDialogProceed() { IsFolder = true, FileType = Models.Helpers.Enums.FileType.Video});
+                      },
+                      () => true));
+            }
+        }
 
         private RelayCommand processCommand;
 
@@ -65,17 +136,15 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
         {
             get
             {
-                if (processCommand == null)
-                {
-                    processCommand = new RelayCommand(
-                        ExecutedProcessCommand, 
-                        () => !IsProcessing 
-                            && !string.IsNullOrEmpty(ImagePath) && File.Exists(ImagePath) 
+                return processCommand ??
+                    (processCommand = new RelayCommand(
+                        ExecutedProcessCommand,
+                        () => !IsProcessing
+                            && !string.IsNullOrEmpty(ImagePath) && File.Exists(ImagePath)
                             && !string.IsNullOrEmpty(AudioPath) && File.Exists(AudioPath)
-                            && !string.IsNullOrEmpty(VideoPath) && !File.Exists(VideoPath));
-                }
-
-                return processCommand;
+                            && !string.IsNullOrEmpty(VideoFilename)
+                            && !string.IsNullOrEmpty(VideoDirectoryPath) && !File.Exists(VideoDirectoryPath))
+                    );
             }
         }
 
@@ -85,7 +154,7 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
         public MainViewModel(IVideoService videoService)
         {
             this.videoService = videoService;
-
+            
             videoService.AttachProgressAction((currentProgress) => {
                 DispatcherHelper.CheckBeginInvokeOnUI(
                     () =>
@@ -94,6 +163,8 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
                     }
                 );
             });
+
+            MessengerInstance.Register<ShowFileDialogResult>(this, OnShowFileDialogResult);
         }
 
         public void ExecutedProcessCommand()
@@ -105,9 +176,29 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
                 videoService.CreateVideo(ImagePath, AudioPath, VideoPath);
 
                 IsProcessing = false;
-                //ImagePath = string.Empty;
-                //AudioPath = string.Empty;
             });
+        }
+
+        public void OnShowFileDialogResult(ShowFileDialogResult message)
+        {
+            if (message.IsFolder)
+            {
+                VideoDirectoryPath = message.Filename;
+            }
+            else
+            {
+                switch (message.FileType)
+                {
+                    case Models.Helpers.Enums.FileType.Audio:
+                        AudioPath = message.Filename;
+                        AudioFilename = message.SafeFilename;
+                        break;
+                    case Models.Helpers.Enums.FileType.Image:
+                        ImagePath = message.Filename;
+                        ImageFilename = message.SafeFilename;
+                        break;
+                }
+            }
         }
     }
 }

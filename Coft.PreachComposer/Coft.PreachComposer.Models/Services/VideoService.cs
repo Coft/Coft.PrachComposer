@@ -58,7 +58,7 @@ namespace Coft.PreachComposer.Models.Services
 
         private void Ffmpeg_ConvertProgress(object sender, ConvertProgressEventArgs e)
         {
-            int percentage = Math.Max(100, e.TotalDuration.Seconds * 100 / (e.Processed.Seconds + 1));
+            int percentage = Math.Min(100, (int)((e.Processed.Seconds + 1) / e.TotalDuration.TotalSeconds * 100));
 
             progressCallback?.Invoke(percentage);
         }
