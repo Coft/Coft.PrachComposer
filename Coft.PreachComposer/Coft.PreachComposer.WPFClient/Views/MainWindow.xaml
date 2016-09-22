@@ -25,7 +25,7 @@
         <Button Grid.Row="0" Command="{Binding ChoseImageCommand}">
             Wybierz obrazek
         </Button>
-
+        
         <TextBlock Grid.Row="0"
                    Grid.Column="1"
                    VerticalAlignment="Center"
@@ -57,22 +57,29 @@
                  Grid.Column="1"
                  VerticalAlignment="Center"
                  Margin="5"
-                 Text="{Binding VideoFilename, UpdateSourceTrigger=PropertyChanged}"/>
-        
-        <ProgressBar Grid.Row="4" 
+                 IsEnabled="{Binding IsVideoFilenameEnabled}"
+                 Text="{Binding VideoFilename, UpdateSourceTrigger=PropertyChanged}">
+        </TextBox>
+
+        <!--<ProgressBar Grid.Row="4" 
                      Grid.ColumnSpan="2"
                      Minimum="0"
                      Maximum="100"
                      Value="{Binding Progress}"
-                     Margin="5"
-                     />
+                     />-->
         
+        <TextBlock Grid.Row="4"
+                   Grid.ColumnSpan="2"
+                   Text="{Binding Progress}"
+                   Visibility="{Binding IsProcessing, Converter={StaticResource BoolToVisibilityConverter}}"
+                   />
+
         <TextBlock Grid.Row="5"
                    Grid.ColumnSpan="2"
                    Text="{Binding Message}"
                    Margin="0"
                    VerticalAlignment="Center"/>
-        
+                    
         <Button Grid.Row="6" Grid.ColumnSpan="2" Command="{Binding ProcessCommand}">
             Rozpocznij przetwarzanie
         </Button>

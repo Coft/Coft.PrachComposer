@@ -1,4 +1,6 @@
-﻿using NLog;
+﻿using Coft.PreachComposer.Models.Messages;
+using GalaSoft.MvvmLight.Messaging;
+using NLog;
 using NReco.VideoConverter;
 using System;
 using System.Collections.Generic;
@@ -15,7 +17,6 @@ namespace Coft.PreachComposer.Models.Services
     {
         private Process ffmpegProcess { get; set; }
         private Action<int> progressCallback { get; set; }
-        private StreamReader reader;
         private Logger logger = LogManager.GetCurrentClassLogger();
 
         public void AttachProgressAction(Action<int> progressCallback)
@@ -58,9 +59,9 @@ namespace Coft.PreachComposer.Models.Services
 
         private void Ffmpeg_ConvertProgress(object sender, ConvertProgressEventArgs e)
         {
-            int percentage = Math.Min(100, (int)((e.Processed.Seconds + 1) / e.TotalDuration.TotalSeconds * 100));
+            int percentage = Math.Min(100, (int)((e.Processed.TotalSeconds + 1) / e.TotalDuration.TotalSeconds * 100));
 
-            progressCallback?.Invoke(percentage);
+            Messenger.Default.Send<UpdateConvertProgressPercentageResult>(new UpdateConvertProgressPercentageResult() { ProgressPercentage = percentage });
         }
     }
 }

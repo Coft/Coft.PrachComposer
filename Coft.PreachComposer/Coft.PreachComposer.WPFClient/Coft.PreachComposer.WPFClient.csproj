@@ -95,6 +95,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Converters\BoolToVisibility.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
@@ -148,7 +149,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\" />
-    <Folder Include="Converters\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Coft.PreachComposer.Models\Coft.PreachComposer.Models.csproj">

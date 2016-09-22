@@ -14,6 +14,7 @@ using System.Windows;
 using Coft.PreachComposer.Models.Services;
 using GalaSoft.MvvmLight.Threading;
 using Coft.PreachComposer.Models.Messages;
+using System.Windows.Input;
 
 namespace Coft.PreachComposer.WPFClient.ViewModels
 {
@@ -24,8 +25,20 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
         public bool IsProcessing
         {
             get { return isProcessing; }
-            set { Set(ref isProcessing, value); }
+            set {
+                IsVideoFilenameEnabled = !value;
+                Set(ref isProcessing, value);
+            }
         }
+
+        private bool isVideoFilenameEnabled = true;
+
+        public bool IsVideoFilenameEnabled
+        {
+            get { return isVideoFilenameEnabled; }
+            set { Set(ref isVideoFilenameEnabled, value); }
+        }
+
 
         private string imagePath;
 
@@ -80,9 +93,9 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
             set { Set(ref videoDirectoryPath, value); }
         }
 
-        private int progress;
+        private string progress;
 
-        public int Progress
+        public string Progress
         {
             get { return progress; }
             set { Set(ref progress, value); }
@@ -97,7 +110,7 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
                         () => {
                             Messenger.Default.Send<ShowFileDialogProceed>(new ShowFileDialogProceed() { IsFolder = false, FileType = Models.Helpers.Enums.FileType.Image });
                         }, 
-                        () => true)); }
+                        () => !IsProcessing)); }
         }
 
         private RelayCommand choseAudioCommand;
@@ -111,7 +124,7 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
                       () => {
                           Messenger.Default.Send<ShowFileDialogProceed>(new ShowFileDialogProceed() { IsFolder = false, FileType = Models.Helpers.Enums.FileType.Audio });
                       },
-                      () => true));
+                      () => !IsProcessing));
             }
         }
 
@@ -126,7 +139,7 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
                       () => {
                           Messenger.Default.Send<ShowFileDialogProceed>(new ShowFileDialogProceed() { IsFolder = true, FileType = Models.Helpers.Enums.FileType.Video});
                       },
-                      () => true));
+                      () => !IsProcessing));
             }
         }
 
@@ -154,17 +167,8 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
         public MainViewModel(IVideoService videoService)
         {
             this.videoService = videoService;
-            
-            videoService.AttachProgressAction((currentProgress) => {
-                DispatcherHelper.CheckBeginInvokeOnUI(
-                    () =>
-                    {
-                        Progress = currentProgress;
-                    }
-                );
-            });
-
             MessengerInstance.Register<ShowFileDialogResult>(this, OnShowFileDialogResult);
+            MessengerInstance.Register<UpdateConvertProgressPercentageResult>(this, OnUpdateConvertProgressPercentageResult);
         }
 
         public void ExecutedProcessCommand()
@@ -174,9 +178,19 @@ namespace Coft.PreachComposer.WPFClient.ViewModels
             Task.Run(() =>
             {
                 videoService.CreateVideo(ImagePath, AudioPath, VideoPath);
-
                 IsProcessing = false;
             });
+        }
+
+        public void OnUpdateConvertProgressPercentageResult(UpdateConvertProgressPercentageResult message)
+        {
+            DispatcherHelper.CheckBeginInvokeOnUI(
+                () =>
+                {
+                    Progress = $"{message.ProgressPercentage} %";
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            );
         }
 
         public void OnShowFileDialogResult(ShowFileDialogResult message)

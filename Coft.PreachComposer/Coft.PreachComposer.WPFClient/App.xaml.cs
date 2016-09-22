@@ -17,11 +17,20 @@ namespace Coft.PreachComposer.WPFClient
     {
         private Logger Logger = LogManager.GetCurrentClassLogger();
 
+        static App()
+        {
+            GalaSoft.MvvmLight.Threading.DispatcherHelper.Initialize();
+        }
+
         public App()
         {
             AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            GalaSoft.MvvmLight.Threading.DispatcherHelper.Initialize();
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
